@@ -10,9 +10,17 @@
     {% load static %}
     <!-- 引入bootstrap的css文件 -->
     <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+
+    <!-- 引入plugins文件 -->
+    <link rel="stylesheet" href="{% static 'plugins/bootstrap-3.4.1-dist/css/bootstrap.min.css' %}">
+    <style>
+        .navbar {
+            border-radius: 0;
+        }
+    </style>
+
     <!--详情页面导入-->
     <script src="{% static 'ckeditor/ckeditor/plugins/prism/lib/prism/prism_patched.min.js' %}"></script>
-    {#    <script src=" ../static/ckeditor/ckeditor/plugins/prism/lib/prism/prism_patched.min.js"></script>#}
     <link rel="stylesheet" href="{% static 'prism/prism.css' %}">
     <!--导入css-->
     <link rel="stylesheet" href="{% static 'common/common.css' %}">
@@ -80,8 +88,41 @@
         <div class="row">
             <!--文章详情-->
             <div class="col-9">
+                <div style="float: right;">
+                    <div role="presentation" class="dropdown">
+                        <a id="drop4" data-toggle="dropdown" role="button"
+                           aria-haspopup="true" aria-expanded="false">
+                            <span class="glyphicon glyphicon-share" aria-hidden="true" style="color: black"></span>
+                        </a>
+                        <ul id="menu1" class="dropdown-menu" aria-labelledby="drop4">
+                            <li><a href="{% url 'home:edit' %}?id={{ article.id }}">编辑</a></li>
+{#                            <li><a id="delete" nid="{{ article.id }}">删除</a></li>#}
+                            <li><a id="delete">删除</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <!--删除博客模态框-->
+                <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                    <div class="modal-dialog" role="document">
+                        <div class="alert alert-danger alert-dismissible fade in" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                                    aria-hidden="true">×</span></button>
+                            <h4>确定要删除此博客吗？</h4>
+                            <p style="margin: 10px 0;">删除后，所有相关联的数据都会被删除的。</p>
+                            <p style="text-align: right;">
+
+                                <a class="btn btn-danger" href="/delete/{{ article.id }}/">确定</a>
+{#                                <button id="btnConfirmDelete" type="button" class="btn btn-danger">确定</button>#}
+                                <!--加入data-dismiss="modal"可以在点击取消后关闭对话框-->
+                                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- 标题及作者 -->
                 <h1 class="mt-4 mb-4">{{ article.title }}</h1>
+                <span></span>
                 <div class="alert alert-success">
                     <div>作者：<span>{{ article.author.username }}</span></div>
                     <div>浏览：{{ article.total_views }}</div>
@@ -173,6 +214,10 @@
 <script type="text/javascript" src="{% static 'js/common.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/detail.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/jquery.pagination.min.js' %}"></script>
+
+<script src="{% static 'js/jquery-3.7.1.js' %}"></script>
+<script src="{% static 'plugins/bootstrap-3.4.1-dist/js/bootstrap.min.js' %}"></script>
+
 <script type="text/javascript">
     $(function () {
         $('#pagination').pagination({
@@ -184,6 +229,18 @@
             }
         })
     });
+
+    $(function () {
+        // 删除按钮
+        bindBtnDeleteEvent();
+    })
+    function bindBtnDeleteEvent() {
+        $("#delete").click(function () {
+            // 点击删除按钮，显示删除对话框
+            $("#deleteModal").modal('show');
+        });
+    }
+
 </script>
 </body>
 
